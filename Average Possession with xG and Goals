@@ -1,0 +1,46 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from adjustText import adjust_text
+
+# Load the data from the matches.csv file
+file_path = 'Downloads/PORTFOLIO/matches.csv'
+data = pd.read_csv(file_path)
+
+# Group the data by team and calculate the average possession, sum of xG, and total goals scored
+team_stats = data.groupby('Team').agg({'Poss': 'mean', 'xG': 'sum', 'GF': 'sum'}).reset_index()
+
+# Create a color palette for the teams
+colors = plt.cm.get_cmap('Set3', len(team_stats['Team']))
+
+# Plot the graph for sum of goals
+fig, ax = plt.subplots(figsize=(10, 6))
+scatter_goals = ax.scatter(team_stats['Poss'], team_stats['GF'], c=colors(range(len(team_stats))))
+
+# Annotate the team names
+texts_goals = [plt.text(x, y, text, ha='center', va='center', rotation=45) for x, y, text in
+               zip(team_stats['Poss'], team_stats['GF'], team_stats['Team'])]
+
+# Adjust the positions of the annotations to avoid overlap
+adjust_text(texts_goals, arrowprops=dict(arrowstyle='-', color='grey'))
+
+ax.set_xlabel('Average Possession')
+ax.set_ylabel('Sum of Goals')
+ax.set_title('Average Possession vs. Sum of Goals Scored for each Team')
+
+# Plot the graph for sum of xG
+fig, ax = plt.subplots(figsize=(10, 6))
+scatter_xg = ax.scatter(team_stats['Poss'], team_stats['xG'], c=colors(range(len(team_stats))))
+
+# Annotate the team names
+texts_xg = [plt.text(x, y, text, ha='center', va='center', rotation=45) for x, y, text in
+            zip(team_stats['Poss'], team_stats['xG'], team_stats['Team'])]
+
+# Adjust the positions of the annotations to avoid overlap
+adjust_text(texts_xg, arrowprops=dict(arrowstyle='-', color='grey'))
+
+ax.set_xlabel('Average Possession')
+ax.set_ylabel('Sum of xG')
+ax.set_title('Average Possession vs. Sum of xG for each Team')
+
+# Show the graphs
+plt.show()
