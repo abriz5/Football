@@ -1,0 +1,40 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from adjustText import adjust_text
+
+# Load the data from the matches.csv file
+file_path = 'Downloads/PORTFOLIO/matches.csv'
+data = pd.read_csv(file_path)
+
+# Group the data by team and calculate the average home attendance
+team_attendance = data.groupby('Team')['Attendance'].mean().reset_index()
+
+# Create a color palette for the teams
+colors = plt.cm.get_cmap('Set3', len(team_attendance['Team']))
+
+# Plot the graph
+fig, ax = plt.subplots(figsize=(10, 6))
+
+# Plot the average home attendance as scatter points and add team names below the dots
+scatter_points = []
+for i in range(len(team_attendance)):
+    scatter_points.append(ax.scatter(i, team_attendance['Attendance'].iloc[i], color=colors(i)))
+
+# Add team names as labels
+texts = []
+for i in range(len(team_attendance)):
+    texts.append(ax.text(i, team_attendance['Attendance'].iloc[i], team_attendance['Team'].iloc[i],
+                         ha='center', va='top', rotation=45))
+
+# Adjust the positions of the team names to prevent overlapping
+adjust_text(texts)
+
+# Add labels and title
+ax.set_xticks(range(len(team_attendance)))
+ax.set_xticklabels([])
+ax.set_xlabel('Team')
+ax.set_ylabel('Average Home Attendance')
+ax.set_title('Average Home Attendance for each Team')
+
+# Show the graph
+plt.show()
