@@ -1,0 +1,47 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the data from the matches.csv file
+file_path = 'Downloads/PORTFOLIO/matches.csv'
+data = pd.read_csv(file_path)
+
+# Group the data by team and calculate the total xG and total goals
+team_stats = data.groupby('Team').agg({'xG': 'sum', 'GF': 'sum'}).reset_index()
+
+# Calculate the median values of xG and goals
+median_xG = team_stats['xG'].median()
+median_goals = team_stats['GF'].median()
+
+# Create a color palette for the teams
+colors = plt.cm.get_cmap('Set3', len(team_stats['Team']))
+
+# Plot the graph
+fig, ax = plt.subplots(figsize=(10, 6))
+
+# Plot the total xG and total goals as scatter points
+for i in range(len(team_stats)):
+    ax.scatter(team_stats['xG'].iloc[i], team_stats['GF'].iloc[i], color=colors(i))
+
+    # Add team names to the dots
+    ax.text(team_stats['xG'].iloc[i], team_stats['GF'].iloc[i], team_stats['Team'].iloc[i], fontsize=8, ha='center', va='center')
+
+# Plot the median line (vertical and horizontal)
+ax.axvline(x=median_xG, color='red', linestyle='--', label='Median xG')
+ax.axhline(y=median_goals, color='grey', linestyle='--', label='Median Goals')
+
+# Add labels and title
+ax.set_xlabel('Total xG')
+ax.set_ylabel('Total Goals')
+ax.set_title('Attacking Efficiency')
+
+# Display the legend
+ax.legend()
+
+# Adjust the plot limits to provide space for the labels
+ax.margins(x=0.2, y=0.2)
+
+# Automatically adjust the position of the text to avoid overlapping
+plt.tight_layout()
+
+# Show the graph
+plt.show()
